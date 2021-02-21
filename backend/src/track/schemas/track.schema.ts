@@ -3,11 +3,10 @@ import { Document } from 'mongoose'
 import * as mongoose from 'mongoose'
 import { Comment } from './comment.schema'
 
-export type TrackDocument = Track & Document;
+export type TrackDocument = Track & Document
 
 @Schema()
 export class Track {
-
   @Prop()
   name: string
 
