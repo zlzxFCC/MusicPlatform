@@ -1,11 +1,14 @@
 import React from 'react';
-import { Button } from '@material-ui/core';
+import MainLayout from '../layouts/MainLayout'
+
 
 const Index = () => {
   return (
-    <div>
-      Главная страница
-    </div>
+    <>
+      <MainLayout>
+
+      </MainLayout>
+    </>
   );
 };
 
