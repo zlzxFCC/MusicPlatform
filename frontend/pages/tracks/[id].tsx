@@ -1,9 +1,7 @@
 import React, { useState } from 'react'
-import { ITrack } from '../../types/track'
 import MainLayout from '../../layouts/MainLayout'
 import { Button, Grid, TextField } from '@material-ui/core'
 import { useRouter } from 'next/router'
-import { TextFields } from '@material-ui/icons'
 import { GetServerSideProps } from 'next'
 import axios from 'axios'
 import { useInput } from '../../hooks/useInput'
@@ -28,7 +26,7 @@ const TrackPage = ({ serverTrack }) => {
   }
 
   return (
-    <MainLayout>
+    <MainLayout title={'Музыкальная площадка - ' + track.name + ' - ' + track.artist}>
       <Button
         variant="outlined"
         style={{ fontSize: 32 }}
