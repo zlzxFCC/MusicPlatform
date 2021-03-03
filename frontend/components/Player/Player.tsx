@@ -1,35 +1,77 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Pause, PlayArrow, VolumeUp } from '@material-ui/icons'
 import { Grid, IconButton } from '@material-ui/core'
 import styles from '../../styles/Player.module.scss'
-import { ITrack } from '../../types/track'
 import TrackProgress from '../TrackProgress/TrackProgress'
+import { useTypedSelector } from '../../hooks/useTypedSelector'
+import { useActions } from '../../hooks/useActions'
+
+let audio
 
 const Player = () => {
-  const active = false
-  const track: ITrack = {
-    comments: [],
-    _id: '603415aabd1ff442e097c216',
-    name: 'Город дорог',
-    text: 'Text track',
-    listens: 0,
-    audio: 'http://localhost:5000/audio/9cdbcf96-1c50-4eb8-90bc-2f99e12fa375.mp3',
-    picture: 'http://localhost:5000/image/7b1894ad-9309-4040-a4fe-173f4159228f.jpg',
-    artist: 'Guf'
+  const { pause, volume, active, duration, currentTime } = useTypedSelector(state => state.player)
+  const { pauseTrack, playTrack, setCurrentTime, setVolume, setDuration, setActiveTrack } = useActions()
+
+  const setAudio = () => {
+    if (active) {
+      audio.src = 'http://localhost:5000/' + active.audio
+      audio.volume = volume / 100
+      audio.onloadedmetadata = () => {
+        setDuration(Math.ceil(audio.duration))
+      }
+      audio.ontimeupdate = () => {
+        setCurrentTime(Math.ceil(audio.currentTime))
+      }
+    }
   }
+
+  useEffect(() => {
+    if (!audio) {
+      audio = new Audio()
+    } else {
+      setAudio()
+      playHandler()
+    }
+  }, [active])
+
+  const playHandler = () => {
+    pause ? playTrack() : pauseTrack()
+    if (pause) {
+      playTrack()
+      audio.play()
+    } else {
+      pauseTrack()
+      audio.pause()
+    }
+  }
+
+  const changeVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
+    audio.volume = Number(e.target.value) / 100
+    setVolume(Number(e.target.value))
+  }
+
+  const changeCurrentTime = (e: React.ChangeEvent<HTMLInputElement>) => {
+    audio.currentTime = Number(e.target.value)
+    setCurrentTime(Number(e.target.value))
+  }
+
+  if (!active) {
+    return null
+  }
+
 
   return (
     <div className={styles.player}>
-      <IconButton onClick={e => e.stopPropagation()}>
-        {active ? <Pause /> : <PlayArrow />}
+      <IconButton onClick={playHandler}>
+        {pause ? <PlayArrow /> : <Pause />}
       </IconButton>
       <Grid container direction='column' style={{ width: 200, margin: '0 20px' }}>
-        <div>{track.name}</div>
-        <div className={styles.artist}>{track.artist}</div>
+        <div>{active?.name}</div>
+        <div className={styles.artist}>{active?.artist}</div>
       </Grid>
-      <TrackProgress left={0} right={100} onChange={() => ({})} />
+      <TrackProgress left={currentTime} right={duration} onChange={changeCurrentTime} />
       <VolumeUp style={{ marginLeft: 'auto' }} />
-      <TrackProgress left={0} right={100} onChange={() => ({})} />
+      <TrackProgress left={volume} right={100} onChange={changeVolume} />
     </div>
   )
 }
