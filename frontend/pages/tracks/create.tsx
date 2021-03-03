@@ -55,13 +55,9 @@ const Create = () => {
           </FileUpload>
         )}
       </StepWrapper>
-      <Grid justifyContent="space-between">
-        <Button disabled={activeStep === 0} onClick={prev}>
-          Назад
-        </Button>
-        <Button disabled={activeStep === 2} onClick={next}>
-          Далее
-        </Button>
+      <Grid container justifyContent='space-between'>
+        <Button disabled={activeStep === 0} onClick={prev}>Назад</Button>
+        <Button onClick={next}>Далее</Button>
       </Grid>
     </MainLayout>
   )
